@@ -82,6 +82,9 @@ dependencies {
     // ViewModel utilities for Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation ("io.coil-kt:coil-compose:2.4.0")
-    
+
+    //Navigation
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
 }
