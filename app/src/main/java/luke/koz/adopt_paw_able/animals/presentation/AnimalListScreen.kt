@@ -31,6 +31,7 @@ import luke.koz.adopt_paw_able.R
 import luke.koz.adopt_paw_able.animals.domain.model.AnimalEntry
 import luke.koz.adopt_paw_able.animals.domain.viewmodel.AnimalListState
 import luke.koz.adopt_paw_able.animals.domain.viewmodel.AnimalsViewModel
+import luke.koz.adopt_paw_able.utils.DecodedAnimalInfo
 
 @Composable
 fun AnimalListCall(modifier: Modifier = Modifier) {
@@ -56,7 +57,8 @@ fun AnimalListScreen(
         is AnimalListState.Success -> {
             AnimalListSuccessScreen(
                 modifier = modifier.fillMaxSize(),
-                filteredData = viewModel.animals
+                filteredData = viewModel.animals,
+                decodingFunction = viewModel::decodeAnimalResponse
             )
         }
         is AnimalListState.Error -> {
@@ -69,7 +71,7 @@ fun AnimalListScreen(
 }
 
 @Composable
-fun AnimalListSuccessScreen(modifier: Modifier = Modifier, filteredData: List<AnimalEntry>) {
+fun AnimalListSuccessScreen(modifier: Modifier = Modifier, filteredData: List<AnimalEntry>, decodingFunction : (AnimalEntry) -> DecodedAnimalInfo) {
 //    val selectedAnimalEntry by animalsViewModel..collectAsState()
     LazyVerticalGrid(
         columns = GridCells.Fixed(1), //todo move this to Viewmodel. connect to adaptive layout after it is implemented
@@ -86,7 +88,8 @@ fun AnimalListSuccessScreen(modifier: Modifier = Modifier, filteredData: List<An
                 modifier = modifier
                     .padding(4.dp)
                     .size(124.dp),
-                onEntryClick = {/*todo handle navigation too selected animal*/}
+                onEntryClick = {/*todo handle navigation too selected animal*/},
+                decodingFunction = decodingFunction
             )
         }
     }
@@ -94,7 +97,12 @@ fun AnimalListSuccessScreen(modifier: Modifier = Modifier, filteredData: List<An
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimalCard(modifier: Modifier = Modifier, animalEntry : AnimalEntry, onEntryClick: () -> Unit) {
+fun AnimalCard(
+    modifier: Modifier = Modifier,
+    animalEntry: AnimalEntry,
+    onEntryClick: () -> Unit,
+    decodingFunction: (AnimalEntry) -> DecodedAnimalInfo
+) {
     Card(
         modifier = modifier.padding(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -116,8 +124,10 @@ fun AnimalCard(modifier: Modifier = Modifier, animalEntry : AnimalEntry, onEntry
             )
             Column (modifier = Modifier.padding(all = 16.dp)) {
                 //todo create custom function to decode this integers to preset categories
-                Text(text = animalEntry.category.toString().uppercase(), style = MaterialTheme.typography.bodyLarge)
-                Text(text = animalEntry.id.toString(), style = MaterialTheme.typography.bodyMedium)
+                Text(text = decodingFunction(animalEntry).category)
+                //Text(text = animalEntry.category.toString().uppercase(), style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Id: " + animalEntry.id.toString(), style = MaterialTheme.typography.bodyMedium)
+                Text(text = decodingFunction(animalEntry).breed ?: "Unknown Breed")
             }
         }
     }

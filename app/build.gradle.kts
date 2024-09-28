@@ -87,4 +87,8 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+//    //For implementing observeAsState
+//    implementation ("androidx.compose.runtime:runtime-livedata:1.7.2")
+//    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.5")
+
 }
